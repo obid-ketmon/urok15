@@ -1,0 +1,41 @@
+import java.io.*;
+import java.util.*;
+
+class Toy {
+    int id;
+    String name;
+    int frequency;
+
+    public Toy(int id, String name, int frequency) {
+        this.id = id;
+        this.name = name;
+        this.frequency = frequency;
+    }
+}
+
+public class ToyStore {
+    public static void main(String[] args) {
+        // Создаем коллекцию для хранения игрушек с учетом частоты выпадения
+        PriorityQueue<Toy> toyQueue = new PriorityQueue<>(Comparator.comparingInt(t -> t.frequency));
+
+        // Добавляем игрушки в очередь
+        toyQueue.add(new Toy(1, "Мяч", 5));
+        toyQueue.add(new Toy(2, "Кукла", 3));
+        toyQueue.add(new Toy(3, "Автомобиль", 7));
+        toyQueue.add(new Toy(4, "Пазл", 2));
+
+        // Создаем файл для записи результатов
+        try (PrintWriter writer = new PrintWriter(new FileWriter("results.txt"))) {
+            // Выполняем розыгрыш 10 раз
+            for (int i = 0; i < 10; i++) {
+                Toy selectedToy = toyQueue.poll(); // Извлекаем игрушку с наименьшей частотой выпадения
+                writer.println("Выпала игрушка: " + selectedToy.name);
+                // Увеличиваем частоту выпадения этой игрушки и добавляем ее обратно в очередь
+                selectedToy.frequency++;
+                toyQueue.add(selectedToy);
+            }
+        } catch (IOException e) {
+            System.err.println("Ошибка при записи в файл: " + e.getMessage());
+        }
+    }
+}
